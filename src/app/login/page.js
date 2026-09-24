@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/auth";
 import { saveToken } from "@/lib/authToken";
@@ -11,10 +11,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const submittingRef = useRef(false); // synchronous guard, in case state hasn't re-rendered yet
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (loading) return;
+    if (submittingRef.current) return;
+    submittingRef.current = true;
 
     setLoading(true);
     setError("");
@@ -25,6 +27,7 @@ export default function LoginPage() {
       router.push("/products");
     } catch (err) {
       setError("Invalid username or password.");
+      submittingRef.current = false;
     } finally {
       setLoading(false);
     }

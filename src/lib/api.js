@@ -18,6 +18,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
+        // This runs inside an Axios interceptor, outside any React component,
+        // so there's no router instance available — a hard navigation is the
+        // only option here.
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = "/login";
       }
     }
